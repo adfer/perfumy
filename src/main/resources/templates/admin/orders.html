@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content=""/>
+    <meta name="author" content=""/>
+
+    <title>Perfumy</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link th:href="@{../templates/css/bootstrap.min.css}" rel="stylesheet"/>
+
+    <!-- Custom CSS -->
+    <link th:href="@{../templates/css/4-col-portfolio.css}" rel="stylesheet"/>
+    <link th:href="@{..//templates/css/shoppingCart.css}" rel="stylesheet"/>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css"/>
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css"/>
+
+    <style>
+        tr.group,
+        tr.group:hover {
+            background-color: #ddd !important;
+        }
+
+    </style>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+<!-- Navigation -->
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <p class="navbar-brand">Perfumy</p>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="/perfumes/women">Damskie</a>
+                </li>
+                <li>
+                    <a href="/perfumes/men">Męskie</a>
+                </li>
+            </ul>
+            <form class="navbar-form navbar-right">
+                <div class="form-group">
+                    <input type="text" id="searchField" class="form-control" placeholder="Szukaj perfumy..."/>
+                </div>
+                <button type="submit" class="btn btn-default" onclick="search('WOMEN'); return false;">Szukaj</button>
+            </form>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
+<!-- Page Content -->
+<div class="container">
+
+    <!-- Page Heading -->
+    <div class="row">
+        <div class="col-lg-4">
+            <h1 class="page-header">Zamówienia</h1>
+        </div>
+        <div class="col-lg-4 pull-right">
+            <button type="button" class="btn pull-right" th:classappend="${service_available} ? btn-danger : btn-success" th:onclick="'service_available(' + ${!service_available} + ');'"><span th:if="${service_available}">Zablokuj serwis</span><span th:unless="${service_available}">Odblokuj serwis</span></button>
+        </div>
+        <div class="col-lg-4 pull-right">
+            <button type="button" class="btn btn-danger pull-right" onclick="removeAllOrders()">Usuń wszystkie zamówienia</button>
+        </div>
+    </div>
+    <!-- /.row -->
+
+    <div id="target"></div>
+
+    <div class="container">
+        <div class="form-group pull-right">
+        </div>
+        <span class="counter pull-right"></span>
+        <table id="orders" class="table table-hover table-bordered results">
+            <thead>
+            <tr>
+                <th class="col-md-1"><a href="?column=0">Imię i nazwisko</a></th>
+                <th class="col-md-1 hide-xs hide-sm"><a href="?column=1">Order #</a></th>
+                <th class="col-md-4"><a href="?column=2">Nazwa perfumy</a></th>
+                <th class="col-md-2"><a href="?column=3">Kategoria</a></th>
+                <th class="col-md-2"><a href="?column=4">Pojemność</a></th>
+                <th class="col-md-1"><a href="?column=5">Ilość</a></th>
+                <th class="col-md-1"><a href=""></a></th>
+
+            </tr>
+            <tr class="warning no-result">
+                <td colspan="7"><i class="fa fa-warning"></i> Nic nie zostało dodane do koszyka</td>
+            </tr>
+            </thead>
+            <tbody>
+            <div th:each="order : ${orders}">
+                <tr th:each="detail, itrStat : ${order.orderDetails}" th:id="${'row'+detail.id}">
+                    <td th:text="${order.orderHeader.customer.firstName + ' ' + order.orderHeader.customer.lastName}">Brak</td>
+                    <td class="hide-xs hide-sm" th:text="${order.orderHeader.id}">Brak</td>
+                    <td th:text="${detail.perfume.name}">Brak</td>
+                    <td th:text="${detail.perfume.category}">Brak</td>
+                    <td th:text="${detail.perfume.capacity}">Brak</td>
+                    <td th:text="${detail.quantity}">Brak</td>
+                    <td>
+                        <button type="button" class="btn btn-success" th:onclick="'javascript:removeOrderDetail(\'' + ${order.orderHeader.id} + '\',\'' + ${detail.id} + '\');'">Usuń</button>
+                    </td>
+                </tr>
+            </div>
+            </tbody>
+        </table>
+    </div>
+
+    <hr/>
+
+    <!-- Footer -->
+    <footer>
+        <div class="row">
+            <div class="col-lg-12">
+                <p>Enjoy! <i class="fa fa-smile-o" aria-hidden="true"></i></p>
+            </div>
+        </div>
+        <!-- /.row -->
+    </footer>
+
+</div>
+<!-- /.container -->
+
+<!-- Modal -->
+<div id="myModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="modal-title-text">Confirmation</h4>
+            </div>
+            <div class="modal-body">
+                <p id="modal-body-text"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Zamknij</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /#myModal -->
+
+<!-- jQuery -->
+<script th:src="@{../templates/js/jquery.js}"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script th:src="@{../templates/js/bootstrap.min.js}"></script>
+
+<script th:src="@{../templates/js/bootbox.min.js}"></script>
+
+<!-- Customer JavaScript -->
+<script th:src="@{../templates/js/orders.js}"></script>
+<script th:src="@{../templates/js/admin.js}"></script>
+
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script>
+
+</body>
+
+</html>

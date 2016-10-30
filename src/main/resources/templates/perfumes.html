@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content=""/>
+    <meta name="author" content=""/>
+
+    <title>Perfumy</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link th:href="@{/templates/css/bootstrap.min.css}" rel="stylesheet"/>
+
+    <!-- Custom CSS -->
+    <link th:href="@{/templates/css/4-col-portfolio.css}" rel="stylesheet"/>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css"/>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+<!-- Navigation -->
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <p class="navbar-brand">Perfumy</p>
+            <div class="visible-xs navbar-form navbar-right">
+                <a href="/cart" class="fa fa-shopping-basket fa-2x" aria-hidden="true"><span class="badge" th:text="${shoppingCart.countOrderedQuantity()}"></span></a>
+            </div>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="/perfumes/women">Damskie</a>
+                </li>
+                <li>
+                    <a href="/perfumes/men">Męskie</a>
+                </li>
+            </ul>
+            <div class="visible-sm visible-md visible-lg navbar-form navbar-right">
+                <a href="/cart" class="fa fa-shopping-basket fa-3x" aria-hidden="true"><span class="badge" th:text="${shoppingCart.countOrderedQuantity()}"></span></a>
+            </div>
+            <form class="navbar-form navbar-right">
+                <div class="form-group">
+                    <input type="text" id="searchField" class="form-control" placeholder="Szukaj perfumy..."/>
+                </div>
+                <button type="submit" class="btn btn-default" th:onclick="${'search(''' + category + '''); return false;'}">Szukaj</button>
+            </form>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
+<!-- Page Content -->
+<div class="container">
+
+    <!-- Page Heading -->
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header" th:text="${category}"/>
+        </div>
+    </div>
+    <!-- /.row -->
+
+    <div id="target"></div>
+
+    <div class="container">
+        <div id="products" class="row list-group">
+            <div class="item  col-md-3 portfolio-item" th:each="perfume : ${perfumes}">
+                <div class="thumbnail row">
+                    <img class="col-xs-6 col-sm-6 col-md-12 group list-group-image" th:src="${perfume.picture}" alt="" height="159" width="129"/>
+                    <div class="col-xs-6 col-sm-6 col-md-12 caption">
+                        <p class="group inner list-group-item-text" th:text="${perfume.brand}"></p>
+                        <h4 class="group inner list-group-item-heading" th:text="${perfume.name}"></h4>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p th:text="${perfume.capacity}"/>
+                            </div>
+                            <div class="col-md-12" th:if="${settings.showPrices}">
+                                <p class="lead" th:text="${perfume.price}"></p>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="btn-group" role="group" aria-label="...">
+                                    <div class="input-group col-xs-6">
+                                      <span class="input-group-btn">
+                                          <button type="button" class="btn btn-default btn-number" disabled="disabled" data-type="minus" th:attr="data-field=${'quant['+perfume.id+']'}">
+                                              <span class="glyphicon glyphicon-minus"></span>
+                                          </button>
+                                      </span>
+                                        <input type="text" style="min-width:3em" th:name="${'quant['+perfume.id+']'}" class="form-control input-number" value="1" min="1" max="10"/>
+                                    <span class="input-group-btn">
+                                          <button type="button" class="btn btn-default btn-number" data-type="plus" th:attr="data-field=${'quant['+perfume.id+']'}">
+                                              <span class="glyphicon glyphicon-plus"></span>
+                                          </button>
+                                      </span>
+                                    </div>
+                                    <div class="input-group col-xs-6">
+                                        <button type="button" class="btn btn-success" th:onclick="${'addToCart(''' + perfume.id + ''');'}">Dodaj do koszyka</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <hr/>
+
+    <!-- Pagination -->
+    <div class="row text-center">
+        <div class="col-lg-12">
+            <ul class="pagination">
+                <li >
+                    <a th:href="${'?page='+pageable.previousOrFirst().getPageNumber()}">&laquo;</a>
+                </li>
+                <li th:each="i : ${#numbers.sequence( 0, pageCount)}" th:classappend="${pageable.getPageNumber() == i}?active">
+                    <a th:href="${'?page='+i}" th:text="${i+1}">1</a>
+                </li>
+                <li>
+                    <a th:href="${'?page='+pageable.next().getPageNumber()}">&raquo;</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- /.row -->
+
+    <hr/>
+
+    <!-- Footer -->
+    <footer>
+        <div class="row">
+            <div class="col-lg-12">
+                <p>Enjoy! <i class="fa fa-smile-o" aria-hidden="true"></i></p>
+            </div>
+        </div>
+        <!-- /.row -->
+    </footer>
+
+</div>
+<!-- /.container -->
+
+<!-- jQuery -->
+<script th:src="@{/templates/js/jquery.js}"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script th:src="@{/templates/js/bootstrap.min.js}"></script>
+
+<!-- Customer JavaScript -->
+<script th:src="@{/templates/js/perfumes.js}"></script>
+
+</body>
+
+</html>
