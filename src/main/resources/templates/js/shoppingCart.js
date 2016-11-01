@@ -54,12 +54,10 @@ function remove(id) {
         function(result){
         if(result==true){
             $.ajax({
-                url: '/cart/delete',
+                url: '/cart/delete?perfumeId='+id,
                 type: 'delete',
-                dataType: 'json',
-                data: id,
                 success: function (data) {
-                    bootbox.confirm("Usunięto",
+                    bootbox.alert("Usunięto",
                     function(result){
                         location.reload();
                     });
@@ -133,7 +131,7 @@ $("#orderForm").validate({
         dataType: 'json',
         data: customer,
         success: function (data) {
-            bootbox.confirm("Zamówiono",
+            bootbox.alert("Zamówiono",
             function(result){
                 location.reload();
             });

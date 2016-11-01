@@ -56,7 +56,7 @@ public class ShoppingCartRestController {
     }
 
     @RequestMapping(value = "delete", method = RequestMethod.DELETE)
-    public ResponseEntity removeFromCart(@RequestBody Integer perfumeId) {
+    public ResponseEntity removeFromCart(@RequestParam Integer perfumeId) {
         Perfume perfume = perfumeService.find(perfumeId);
         if (perfume == null) {
             StringBuilder message = new StringBuilder("Perfume with id ").append(perfumeId).append(" not found");
