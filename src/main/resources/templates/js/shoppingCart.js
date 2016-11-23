@@ -126,7 +126,7 @@ $("#orderForm").validate({
     }
 
     $.ajax({
-        url: '/admin/order',
+        url: '/order',
         type: 'post',
         dataType: 'json',
         data: customer,

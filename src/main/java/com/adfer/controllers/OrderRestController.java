@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
  * Created by adrianferenc on 07.10.2016.
  */
 @RestController
-@RequestMapping("admin/order")
+@RequestMapping("/order")
 public class OrderRestController {
 
     private OrderService orderService;
@@ -30,13 +30,4 @@ public class OrderRestController {
         return ResponseEntity.ok(orderService.makeOrder(customer));
     }
 
-    @RequestMapping(value = "delete/all", method = RequestMethod.DELETE)
-    public void removeOrder() {
-        orderService.removeAllOrders();
-    }
-
-    @RequestMapping(value = "/detail/delete", method = RequestMethod.DELETE)
-    public void removeOrderDetail(@RequestParam Integer orderHeaderId, @RequestParam Integer orderDetailId) {
-        orderService.removeOrderDetail(orderHeaderId, orderDetailId);
-    }
 }
